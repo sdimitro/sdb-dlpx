@@ -51,6 +51,7 @@ class Blkptr(sdb.PrettyPrinter):
 
     names = ["blkptr"]
     input_type = "blkptr_t *"
+    load_on = [sdb.Module("zfs"), sdb.Library("libzpool")]
 
     def get_ot_name(self, bp: drgn.Object) -> str:
         return str(
