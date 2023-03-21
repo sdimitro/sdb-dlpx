@@ -116,7 +116,7 @@ def BP_GET_COMPRESS(bp: drgn.Object) -> int:
 
 
 def BP_IS_EMBEDDED(bp: drgn.Object) -> bool:
-    return BF64_GET(bp.blk_prop, 39, 1)
+    return bool(BF64_GET(bp.blk_prop, 39, 1))
 
 
 def BP_GET_CHECKSUM(bp: drgn.Object) -> int:
@@ -134,7 +134,7 @@ def BP_GET_LEVEL(bp: drgn.Object) -> int:
 
 
 def BP_USES_CRYPT(bp: drgn.Object) -> bool:
-    return BF64_GET(bp.blk_prop, 61, 1)
+    return bool(BF64_GET(bp.blk_prop, 61, 1))
 
 
 def BP_IS_ENCRYPTED(bp: drgn.Object) -> bool:
@@ -152,7 +152,7 @@ def BP_HAS_INDIRECT_MAC_CKSUM(bp: drgn.Object) -> bool:
 
 
 def BP_GET_DEDUP(bp: drgn.Object) -> bool:
-    return BF64_GET(bp.blk_prop, 62, 1)
+    return bool(BF64_GET(bp.blk_prop, 62, 1))
 
 
 def BP_GET_BYTEORDER(bp: drgn.Object) -> int:
@@ -194,7 +194,7 @@ def BP_GET_FILL(bp: drgn.Object) -> int:
         return BF64_GET(bp.blk_fill, 0, 32)
     if BP_IS_EMBEDDED(bp):
         return 1
-    return bp.blk_fill
+    return int(bp.blk_fill)
 
 
 def BP_GET_IV2(bp: drgn.Object) -> int:
@@ -204,7 +204,7 @@ def BP_GET_IV2(bp: drgn.Object) -> int:
 def BP_IS_GANG(bp: drgn.Object) -> bool:
     if BP_IS_EMBEDDED(bp):
         return False
-    return BF64_GET(bp.blk_dva[0].dva_word[1], 63, 1)
+    return bool(BF64_GET(bp.blk_dva[0].dva_word[1], 63, 1))
 
 
 def BP_IS_REDACTED(bp: drgn.Object) -> bool:
@@ -241,13 +241,13 @@ def DVA_IS_VALID(dva: drgn.Object) -> bool:
 
 
 def DVA_IS_EMPTY(dva: drgn.Object) -> bool:
-    return (dva.dva_word[0] == 0 and dva.dva_word[1] == 0)
+    return bool(dva.dva_word[0] == 0 and dva.dva_word[1] == 0)
 
 
-def DMU_OT_IS_ENCRYPTED(ot: int) -> int:
+def DMU_OT_IS_ENCRYPTED(ot: int) -> bool:
     if ot & DMU_OT_NEWTYPE:
-        return ot & DMU_OT_ENCRYPTED
-    return int(sdb.get_object("dmu_ot")[ot].ot_encrypt)
+        return bool(ot & DMU_OT_ENCRYPTED)
+    return bool(sdb.get_object("dmu_ot")[ot].ot_encrypt)
 
 
 SPA_LSIZEBITS = 16
