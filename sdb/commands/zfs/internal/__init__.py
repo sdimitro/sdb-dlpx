@@ -211,6 +211,7 @@ def BP_IS_REDACTED(bp: drgn.Object) -> bool:
     return (BP_IS_EMBEDDED(bp) and
             BPE_GET_ETYPE(bp) == BP_EMBEDDED_TYPE_REDACTED)
 
+
 def BP_IS_HOLE(bp: drgn.Object) -> bool:
     return (not BP_IS_EMBEDDED(bp) and DVA_IS_EMPTY(bp.blk_dva[0]))
 

@@ -21,22 +21,13 @@ from typing import Iterable
 
 import drgn
 import sdb
-from sdb.commands.zfs.internal import (BP_GET_TYPE, BP_GET_CHECKSUM,
-                                       BP_GET_COMPRESS, BP_GET_LEVEL,
-                                       BP_GET_LSIZE, BP_GET_BIRTH,
-                                       BP_GET_PSIZE, BP_LOGICAL_BIRTH,
-                                       BP_IS_HOLE, BP_GET_NDVAS,
-                                       BP_IS_ENCRYPTED, BP_IS_GANG,
-                                       BP_GET_LAYER, BP_IS_AUTHENTICATED,
-                                       BP_HAS_INDIRECT_MAC_CKSUM,
-                                       BP_GET_BYTEORDER, BP_GET_DEDUP,
-                                       BP_IS_EMBEDDED, BP_IS_REDACTED,
-                                       BP_GET_FILL, BP_GET_IV2,
-                                       DVA_IS_VALID, DVA_GET_VDEV,
-                                       DVA_GET_OFFSET, DVA_GET_ASIZE,
-                                       BPE_GET_ETYPE)
-
-
+from sdb.commands.zfs.internal import (
+    BP_GET_TYPE, BP_GET_CHECKSUM, BP_GET_COMPRESS, BP_GET_LEVEL, BP_GET_LSIZE,
+    BP_GET_BIRTH, BP_GET_PSIZE, BP_LOGICAL_BIRTH, BP_IS_HOLE, BP_GET_NDVAS,
+    BP_IS_ENCRYPTED, BP_IS_GANG, BP_GET_LAYER, BP_IS_AUTHENTICATED,
+    BP_HAS_INDIRECT_MAC_CKSUM, BP_GET_BYTEORDER, BP_GET_DEDUP, BP_IS_EMBEDDED,
+    BP_IS_REDACTED, BP_GET_FILL, BP_GET_IV2, DVA_IS_VALID, DVA_GET_VDEV,
+    DVA_GET_OFFSET, DVA_GET_ASIZE, BPE_GET_ETYPE)
 
 
 class Blkptr(sdb.PrettyPrinter):
@@ -61,28 +52,24 @@ class Blkptr(sdb.PrettyPrinter):
     names = ["blkptr"]
     input_type = "blkptr_t *"
 
-
     def get_ot_name(self, bp: drgn.Object) -> str:
-        return str(sdb.get_object(
-            "dmu_ot")[BP_GET_TYPE(bp)].ot_name.string_().decode("utf-8"))
-
+        return str(
+            sdb.get_object("dmu_ot")[BP_GET_TYPE(bp)].ot_name.string_().decode(
+                "utf-8"))
 
     def get_checksum(self, bp: drgn.Object) -> str:
-        checksum = sdb.get_object(
-                "zio_checksum_table")[BP_GET_CHECKSUM(bp)].ci_name
+        checksum = sdb.get_object("zio_checksum_table")[BP_GET_CHECKSUM(
+            bp)].ci_name
         return str(checksum.string_().decode("utf-8"))
 
-
     def get_compress(self, bp: drgn.Object) -> str:
-        compress = sdb.get_object(
-                "zio_compress_table")[BP_GET_COMPRESS(bp)].ci_name
+        compress = sdb.get_object("zio_compress_table")[BP_GET_COMPRESS(
+            bp)].ci_name
         return str(compress.string_().decode("utf-8"))
-
 
     def print_hole(self, bp: drgn.Object) -> None:
         print(f"HOLE [L{BP_GET_LEVEL(bp)} {self.get_ot_name(bp)}]", end=' ')
         print(f"size={BP_GET_LSIZE(bp):#x}L birth={BP_GET_BIRTH(bp):#x}L")
-
 
     def print_embedded(self, bp: drgn.Object) -> None:
         print(f"EMBEDDED [L{BP_GET_LEVEL(bp)}", end=' ')
@@ -91,30 +78,25 @@ class Blkptr(sdb.PrettyPrinter):
         print(f"size={BP_GET_LSIZE(bp):#x}L/{BP_GET_PSIZE(bp):#x}P ", end=' ')
         print(f"birth={BP_LOGICAL_BIRTH(bp)}L")
 
-
     def print_redacted(self, bp: drgn.Object) -> None:
         print(f"REDACTED [L{BP_GET_LEVEL(bp)}", end=' ')
         print(f"{self.get_ot_name(bp)}] size={BP_GET_LSIZE(bp):#x}", end=' ')
         print(f"birth={BP_LOGICAL_BIRTH(bp):#x}")
-
 
     def get_byteorder(self, bp: drgn.Object) -> str:
         if BP_GET_BYTEORDER(bp) == 0:
             return "BE"
         return "LE"
 
-
     def get_gang(self, bp: drgn.Object) -> str:
         if BP_IS_GANG(bp):
             return "gang"
         return "contiguous"
 
-
     def get_dedup(self, bp: drgn.Object) -> str:
         if BP_GET_DEDUP(bp):
             return "dedup"
         return "unique"
-
 
     def get_crypt(self, bp: drgn.Object) -> str:
         if BP_IS_ENCRYPTED(bp):
@@ -124,7 +106,6 @@ class Blkptr(sdb.PrettyPrinter):
         if BP_HAS_INDIRECT_MAC_CKSUM(bp):
             return "indirect-MAC"
         return "unencrypted"
-
 
     def pretty_print(self, objs: Iterable[drgn.Object]) -> None:
         copyname = ['zero', 'single', 'double', 'triple']
