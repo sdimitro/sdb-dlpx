@@ -31,9 +31,10 @@ from sdb.commands.zfs.internal import (BP_GET_TYPE, BP_GET_CHECKSUM,
                                        BP_HAS_INDIRECT_MAC_CKSUM,
                                        BP_GET_BYTEORDER, BP_GET_DEDUP,
                                        BP_IS_EMBEDDED, BP_IS_REDACTED,
-                                       BP_GET_FILL, DVA_IS_VALID,
-                                       DVA_GET_VDEV, DVA_GET_OFFSET,
-                                       DVA_GET_ASIZE)
+                                       BP_GET_FILL, BP_GET_IV2,
+                                       DVA_IS_VALID, DVA_GET_VDEV,
+                                       DVA_GET_OFFSET, DVA_GET_ASIZE,
+                                       BPE_GET_ETYPE)
 
 
 
@@ -88,13 +89,13 @@ class Blkptr(sdb.PrettyPrinter):
         print(f"{self.get_ot_name(bp)}]", end=' ')
         print(f"et={BPE_GET_ETYPE(bp)} {BP_GET_COMPRESS(bp)} ", end=' ')
         print(f"size={BP_GET_LSIZE(bp):#x}L/{BP_GET_PSIZE(bp):#x}P ", end=' ')
-        print(f"birth={BP_GET_BIRTH(bp)}L")
+        print(f"birth={BP_LOGICAL_BIRTH(bp)}L")
 
 
     def print_redacted(self, bp: drgn.Object) -> None:
         print(f"REDACTED [L{BP_GET_LEVEL(bp)}", end=' ')
         print(f"{self.get_ot_name(bp)}] size={BP_GET_LSIZE(bp):#x}", end=' ')
-        print(f"birth={BP_GET_LOGICAL_BIRTH(bp):#x}")
+        print(f"birth={BP_LOGICAL_BIRTH(bp):#x}")
 
 
     def get_byteorder(self, bp: drgn.Object) -> str:
@@ -134,10 +135,6 @@ class Blkptr(sdb.PrettyPrinter):
                 print("<NULL>")
                 continue
 
-            self.type = self.get_ot_name(bp)
-            self.compress = self.get_compress(bp)
-            self.checksum = self.get_checksum(bp)
-
             if BP_IS_HOLE(bp):
                 self.print_hole(bp)
             elif BP_IS_EMBEDDED(bp):
@@ -147,7 +144,7 @@ class Blkptr(sdb.PrettyPrinter):
             else:
 
                 for d in range(0, BP_GET_NDVAS(bp)):
-                    if (DVA_IS_VALID(bp.blk_dva[d])):
+                    if DVA_IS_VALID(bp.blk_dva[d]):
                         copies += 1
                     print(f"DVA[{d}]=<{DVA_GET_VDEV(bp.blk_dva[d])}:", end='')
                     print(f"{DVA_GET_OFFSET(bp.blk_dva[d]):#x}:", end='')

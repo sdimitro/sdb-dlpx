@@ -163,12 +163,10 @@ def BP_GET_LAYER(bp: drgn.Object) -> int:
     if BP_IS_EMBEDDED(bp):
         if sdb.get_type('blkptr_t').has_member('blk_logical_birth'):
             return BF64_GET(bp.blk_logical_birth, 56, 8)
-        else:
-            return BF64_GET(bp.blk_birth, 56, 8)
+        return BF64_GET(bp.blk_birth, 56, 8)
     if sdb.get_type('blkptr_t').has_member('blk_physical_birth'):
         return BF64_GET(bp.blk_physical_birth, 56, 8)
-    else:
-        return BF64_GET(bp.blk_phys_birth, 56, 8)
+    return BF64_GET(bp.blk_phys_birth, 56, 8)
 
 
 def BP_LOGICAL_BIRTH(bp: drgn.Object) -> int:
@@ -239,11 +237,17 @@ def DVA_GET_OFFSET(dva: drgn.Object) -> int:
 
 
 def DVA_IS_VALID(dva: drgn.Object) -> bool:
-    return (DVA_GET_ASIZE(dva) != 0)
+    return DVA_GET_ASIZE(dva) != 0
 
 
 def DVA_IS_EMPTY(dva: drgn.Object) -> bool:
     return (dva.dva_word[0] == 0 and dva.dva_word[1] == 0)
+
+
+def DMU_OT_IS_ENCRYPTED(ot: int) -> int:
+    if ot & DMU_OT_NEWTYPE:
+        return ot & DMU_OT_ENCRYPTED
+    return int(sdb.get_object("dmu_ot")[ot].ot_encrypt)
 
 
 SPA_LSIZEBITS = 16
@@ -254,6 +258,9 @@ SPA_VDEVBITS = 24
 SPA_MINBLOCKSHIFT = 9
 
 ZIO_CHECKSUM_OFF = 2
+
+DMU_OT_ENCRYPTED = 0x20
+DMU_OT_NEWTYPE = 0x80
 
 BP_EMBEDDED_TYPE_DATA = 0
 BP_EMBEDDED_TYPE_RESERVED = 1
