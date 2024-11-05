@@ -49,4 +49,4 @@ class Tail(sdb.Command):
         for obj in objs:
             queue.append(obj)
         for obj in queue:
-            yield obj
+            yield from obj

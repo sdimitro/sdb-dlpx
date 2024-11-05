@@ -151,7 +151,7 @@ def util(cache: drgn.Object) -> int:
 
 def lookup_cache_by_address(obj: drgn.Object) -> Optional[drgn.Object]:
     try:
-        cache = find_containing_slab_cache(obj)
+        cache = find_containing_slab_cache(prog=sdb.get_prog(), addr=obj)
         if cache.value_() == 0x0:
             return None
         return cache

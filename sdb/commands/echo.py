@@ -39,7 +39,7 @@ class Echo(sdb.Command):
 
     def _call(self, objs: Iterable[drgn.Object]) -> Iterable[drgn.Object]:
         for obj in objs:
-            yield obj
+            yield from obj
 
         for addr in self.args.addrs:
             try:

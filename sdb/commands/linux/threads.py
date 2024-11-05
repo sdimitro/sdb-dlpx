@@ -97,4 +97,4 @@ class KernelThreads(sdb.Locator, sdb.PrettyPrinter):
         table.print_()
 
     def no_input(self) -> Iterable[drgn.Object]:
-        yield from for_each_task(sdb.get_prog())
+        yield from for_each_task(prog=sdb.get_prog(), ns=sdb.get_prog())

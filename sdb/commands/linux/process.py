@@ -58,7 +58,7 @@ class FindPid(sdb.Command):
 
     def _call(self, objs: Iterable[drgn.Object]) -> Iterable[drgn.Object]:
         for pid in self.args.pid:
-            yield find_pid(sdb.get_prog(), pid)
+            yield find_pid(prog=sdb.get_prog(), ns=sdb.get_prog(), pid=pid)
 
 
 class FindTask(sdb.Command):
@@ -90,4 +90,4 @@ class FindTask(sdb.Command):
 
     def _call(self, objs: Iterable[drgn.Object]) -> Iterable[drgn.Object]:
         for pid in self.args.pid:
-            yield find_task(sdb.get_prog(), pid)
+            yield find_task(prog=sdb.get_prog(), ns=sdb.get_prog(), pid=pid)

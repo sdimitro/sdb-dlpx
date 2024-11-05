@@ -400,7 +400,7 @@ class KernelStacks(sdb.Locator, sdb.PrettyPrinter):
 
     def no_input(self) -> Iterable[drgn.Object]:
         self.validate_context()
-        yield from filter(self.match_stack, for_each_task(sdb.get_prog()))
+        yield from filter(self.match_stack, for_each_task(prog=sdb.get_prog(), ns=sdb.get_prog()))
 
 
 class KernelCrashedThread(sdb.Locator, sdb.PrettyPrinter):
