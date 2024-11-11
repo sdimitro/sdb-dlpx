@@ -130,8 +130,7 @@ class ZFSHistogram(sdb.Command):
                 min_bucket = bucket
             if bucket > max_bucket and count > 0:
                 max_bucket = bucket
-            if count > max_count:
-                max_count = count
+            max_count = max(max_count, count)
 
         HISTOGRAM_WIDTH_MAX = 40
         max_count = max(max_count, HISTOGRAM_WIDTH_MAX)
