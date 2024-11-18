@@ -48,5 +48,4 @@ class Tail(sdb.Command):
         queue: Deque[drgn.Object] = deque(maxlen=self.args.count)
         for obj in objs:
             queue.append(obj)
-        for obj in queue:
-            yield obj
+        yield from queue
